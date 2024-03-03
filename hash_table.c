@@ -56,13 +56,17 @@ bool insert( char* name, int age, char sex, char *division){
     printf("inserting %s\n", name);
     int index = hash_func(name);
     printf("index is %d\n", index);
-    if(emp_hash_tbl[index] != NULL) {
-        printf("Employee details of %s already present.\n", name);
-        return false;
-    }
+
     employee *new_emp = create_new_emp(name, age, sex, division);
     printf("Inserted %s in emplyee database\n", name);
-    emp_hash_tbl[index] = new_emp;
+    for(int i=0; i<HASH_TABLE_SIZE; i++){
+        int temp_index = (index + i) % HASH_TABLE_SIZE;
+        if(emp_hash_tbl[temp_index]==NULL){
+            emp_hash_tbl[temp_index] = new_emp;
+            return true;
+        }
+    }
+    return false;    
 }
 
 void display_emp_details (employee *emp){
@@ -74,11 +78,17 @@ void search(char *name){
     printf("searching %s\n", name);
     int index = hash_func(name);
     printf("index is %d\n", index);
-    if(emp_hash_tbl[index] == NULL) {
-        printf("employee details of %s not present in the database.\n", name);
-        return;
+    for(int i=0; i<HASH_TABLE_SIZE; i++){
+        int temp_index = (index + i) % HASH_TABLE_SIZE;
+        if(!emp_hash_tbl[temp_index]){
+            break;
+        }
+        if(!strcmp(emp_hash_tbl[temp_index]->name, name)){
+            display_emp_details(emp_hash_tbl[temp_index]);
+            return;
+        }
     }
-    display_emp_details(emp_hash_tbl[index]);
+    printf("employee details of %s were not found\n",name);
 }
 
 void initialize_hash_tbl(){
