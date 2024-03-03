@@ -15,8 +15,10 @@ OUTPUT:
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdint.h>
 
 #define HASH_TABLE_SIZE 10
+#define DELETED_NODE (employee *)(0xFFFFFFFFFFFFFFFFUL)
 
 typedef struct employee{
     char *name;
@@ -58,15 +60,34 @@ bool insert( char* name, int age, char sex, char *division){
     printf("index is %d\n", index);
 
     employee *new_emp = create_new_emp(name, age, sex, division);
-    printf("Inserted %s in emplyee database\n", name);
+    
     for(int i=0; i<HASH_TABLE_SIZE; i++){
         int temp_index = (index + i) % HASH_TABLE_SIZE;
-        if(emp_hash_tbl[temp_index]==NULL){
+        if(emp_hash_tbl[temp_index]==NULL || emp_hash_tbl[temp_index]==DELETED_NODE){
             emp_hash_tbl[temp_index] = new_emp;
+            printf("Inserted %s in emplyee database\n", name);
             return true;
         }
     }
     return false;    
+}
+
+void delete(char *name){
+    printf("Deleting %s\n", name);
+    int index = hash_func(name);
+    printf("index is %d\n", index);
+    for(int i=0; i<HASH_TABLE_SIZE; i++){
+        int temp_index = (index + i) % HASH_TABLE_SIZE;
+        if(!emp_hash_tbl[temp_index]){
+            break;
+        }
+        if(!strcmp(emp_hash_tbl[temp_index]->name, name)){
+            emp_hash_tbl[temp_index] = DELETED_NODE;
+            printf("Deleted %s in emplyee database\n", name);
+            return;
+        }
+    }
+    printf("Unable to delete. Employee details of %s were not found\n",name);
 }
 
 void display_emp_details (employee *emp){
@@ -82,6 +103,9 @@ void search(char *name){
         int temp_index = (index + i) % HASH_TABLE_SIZE;
         if(!emp_hash_tbl[temp_index]){
             break;
+        }
+        if(emp_hash_tbl[temp_index] == DELETED_NODE){
+            continue;
         }
         if(!strcmp(emp_hash_tbl[temp_index]->name, name)){
             display_emp_details(emp_hash_tbl[temp_index]);
@@ -101,12 +125,14 @@ int main(){
 
     initialize_hash_tbl();
     insert("Kashinath", 39, 'M', "Software Engineering");
-    insert("Sunil", 39, 'M', "Data science");
-    insert("Mahesh", 39, 'M', "Embedded systems");
-    insert("Anil", 39, 'M', "Management");
+    insert("Sunil", 45, 'M', "Data science");
+    insert("Mahesh", 50, 'M', "Embedded systems");
+    insert("Anil", 30, 'M', "Management");
     //insert("Kashinath", 39, 'M', "Software Engineering");
     //insert("Kashinath", 39, 'M', "Software Engineering");
+    delete("Kashinath");
     search("Kashinath");
+    search("Sunil");
     search("Anil");
     search("Mahesh");
     search("Sneha");
