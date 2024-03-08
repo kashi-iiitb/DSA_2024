@@ -14,6 +14,7 @@ EXPECTED OUTPUT:
 #include <stdbool.h>
 #include "bst.h"
 #include "stack.h"
+#include "queue.h"
 
 bstNode* create_node( int val) {
     bstNode *temp = malloc(sizeof(bstNode));
@@ -77,8 +78,22 @@ void inorder_bst(bstNode *root) {
     // bstNode *tempBstNode = pop(&s);
     // printf("Popped data is %d\n", tempBstNode->data);
     // pop(&s);
+}
 
-
+void level_order_trav( bstNode *root){
+    Queue q = {.front=NULL, .rear=NULL };
+    //queueNode *qNode = create_queue_node(root);
+    enqueue(&q, root);
+    do{
+        bstNode *tempBstNode = dequeue(&q);
+        printf("%d ", tempBstNode->data);
+        if(tempBstNode->left){
+            enqueue(&q, tempBstNode->left);
+        } 
+        if(tempBstNode->right) {
+            enqueue(&q, tempBstNode->right);
+        }
+    } while(!is_queue_empty(&q));
 }
 
 int main() {
@@ -93,5 +108,8 @@ int main() {
     insert_bst(&root, 30);
     insert_bst(&root, 22);
     insert_bst(&root, 2);
+    printf("\nInorder traversal of the tree: ");
     inorder_bst(root);
+    printf("\nLevel order traversal of the tree: ");
+    level_order_trav(root);
 }

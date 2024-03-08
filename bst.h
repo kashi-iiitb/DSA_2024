@@ -8,3 +8,4 @@ typedef struct node {
 
 void insert_bst(bstNode **root, int val);
 bstNode* create_node( int val);
+//void level_order_trav(Queue *q, bstNode *root);
