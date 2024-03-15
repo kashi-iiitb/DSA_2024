@@ -44,3 +44,18 @@ bstNode* pop(Stack *s) {
     free(tempStNodePtr);
     return tempBstNode;
 }
+
+bstNode* peek(Stack *s) {
+    if(is_stack_empty(s)) {
+        printf("Stack is Empty, Unable to Pop");
+        return NULL;
+    }
+    return (s->top)->dataNode;
+    /*stackNode *tempStNodePtr = s->top;
+    s->top = tempStNodePtr->next;
+    tempStNodePtr->next = NULL;
+    bstNode *tempBstNode = tempStNodePtr->dataNode;
+    free(tempStNodePtr);
+    return tempBstNode;*/
+
+}

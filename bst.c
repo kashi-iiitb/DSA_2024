@@ -12,6 +12,7 @@ EXPECTED OUTPUT:
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h> //for sleep()
 #include "bst.h"
 #include "stack.h"
 #include "queue.h"
@@ -96,6 +97,90 @@ void level_order_trav( bstNode *root){
     } while(!is_queue_empty(&q));
 }
 
+void dfs_traverse(bstNode *root){
+    bstNode *temp = root;
+    Stack s = {.top = NULL};
+    do{
+        if(temp){
+            printf("%d ", temp->data);
+            push(&s, temp);
+            temp = temp->left;
+        }
+        if(temp == NULL) {
+            temp = pop(&s);
+            temp = temp->right;
+        }
+    }while(temp || !is_stack_empty(&s));
+}
+
+void inorder_traverse(bstNode *root){
+    bstNode *temp = root;
+    Stack s = {.top = NULL};
+    do{
+        if(temp){
+            //printf("%d ", temp->data);
+            push(&s, temp);
+            temp = temp->left;
+        }
+        if(temp == NULL) {
+            temp = pop(&s);
+            printf("%d ", temp->data);
+            temp = temp->right;
+        }
+    }while(temp || !is_stack_empty(&s));
+}
+
+void preorder_traverse(bstNode *root){
+    bstNode *temp = root;
+    Stack s = {.top = NULL};
+    do{
+        if(temp){
+            printf("%d ", temp->data);
+            push(&s, temp);
+            temp = temp->left;
+        }
+        if(temp == NULL) {
+            temp = pop(&s);
+            temp = temp->right;
+        }
+    }while(temp || !is_stack_empty(&s));
+}
+
+//Not complete yet. It needs 2 stacks to do post-order traversal
+//Need to update in the future
+void postorder_traverse(bstNode *root){
+    bstNode *temp = root;
+    Stack s = {.top = NULL};
+    do{
+        if(temp){
+            //printf("%d ", temp->data);
+            push(&s, temp);
+            temp = temp->left;
+        } /*else{
+            bstNode *tempBstNode = pop(&s);
+            printf("%d ", tempBstNode->data);
+        }*/
+        //if(temp == NULL) {
+            temp = pop(&s);
+            //temp = temp->right;
+            if(temp->right == NULL){
+                //bstNode *tempBstNode = pop(&s);
+                printf("%d ", temp->data);  
+                temp = NULL;              
+            } else{
+                push(&s, temp);
+                temp = temp->right;
+            }
+            /*if(temp->right){
+                temp = temp->right;
+            }else {
+                bstNode *tempBstNode = pop(&s);
+                printf("%d ", tempBstNode->data);
+            }*/
+        //}
+    }while(temp || !is_stack_empty(&s));
+}
+
 int main() {
     bstNode *root = NULL;
 
@@ -108,8 +193,18 @@ int main() {
     insert_bst(&root, 30);
     insert_bst(&root, 22);
     insert_bst(&root, 2);
-    printf("\nInorder traversal of the tree: ");
-    inorder_bst(root);
+    //printf("\nInorder traversal of the tree: ");
+    //inorder_bst(root);
     printf("\nLevel order traversal of the tree: ");
     level_order_trav(root);
+    //printf("\nDepth First Search traversal of the tree: ");
+    //dfs_traverse(root);
+    printf("\nIn-order traversal of the tree: ");
+    inorder_traverse(root);
+    sleep(2);
+    printf("\nPre-order traversal of the tree: ");
+    preorder_traverse(root);
+    //sleep(2);
+    //printf("\nPost-order traversal of the tree: ");
+    //postorder_traverse(root);
 }
